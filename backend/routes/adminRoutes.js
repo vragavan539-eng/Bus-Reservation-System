@@ -1,0 +1,10 @@
+const express = require('express');
+const router = express.Router();
+const { getDashboardStats, getAllUsers, blockUser, unblockUser } = require('../controllers/adminController');
+const { protect, authorize } = require('../middleware/auth');
+router.use(protect, authorize('admin'));
+router.get('/dashboard', getDashboardStats);
+router.get('/users', getAllUsers);
+router.put('/users/:id/block', blockUser);
+router.put('/users/:id/unblock', unblockUser);
+module.exports = router;

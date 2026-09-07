@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const { createBooking, getUserBookings, getBookingById, cancelBooking, getBookingByPNR, getAllBookings, confirmPayment } = require('../controllers/bookingController');
+const { protect, authorize } = require('../middleware/auth');
+router.post('/', protect, createBooking);
+router.get('/my', protect, getUserBookings);
+router.get('/pnr/:pnr', protect, getBookingByPNR);
+router.get('/all', protect, authorize('admin'), getAllBookings);
+router.get('/:id', protect, getBookingById);
+router.put('/:id/cancel', protect, cancelBooking);
+router.put('/confirm-payment', protect, confirmPayment);
+module.exports = router;

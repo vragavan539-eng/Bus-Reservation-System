@@ -1,0 +1,1 @@
+require('dotenv').config(); fetch('https://api.groq.com/openai/v1/models', { headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` } }) .then(r => r.json()) .then(data => { console.log('Available models:'); data.data.forEach(m => console.log(' -', m.id)); }) .catch(err => console.log('FAILED:', err.message));
