@@ -1,6 +1,12 @@
 import axios from 'axios';
 
-const API = axios.create({ baseURL: '/api' });
+// Local dev: REACT_APP_API_URL is not set, so requests go to '/api' and the CRA proxy forwards them to the backend.
+// Deployed (Vercel): set REACT_APP_API_URL to the backend URL (e.g. https://busgo-api.onrender.com, no trailing slash).
+const API = axios.create({
+  baseURL: process.env.REACT_APP_API_URL
+    ? `${process.env.REACT_APP_API_URL.replace(/\/$/, '')}/api`
+    : '/api',
+});
 
 API.interceptors.request.use(cfg => {
   const token = localStorage.getItem('busgo_token');
@@ -90,7 +96,7 @@ export const adminAPI = {
   updateRoute: (id, d) => API.put(`/admin/routes/${id}`, d),
   deleteRoute: id      => API.delete(`/admin/routes/${id}`),
 
-  // ✅ NEW: Analytics & Reports
+  // Analytics & Reports
   analytics:       (range = '30d') => API.get('/admin/analytics', { params: { range } }),
   exportAnalytics: (range = '30d') => API.get('/admin/analytics/export', {
     params: { range },
