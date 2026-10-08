@@ -2,10 +2,16 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+const savedPassengerSchema = new mongoose.Schema({
+  name:   { type: String, required: true, trim: true },
+  age:    { type: Number, required: true },
+  gender: { type: String, enum: ['Male', 'Female', 'Other'], default: 'Male' },
+}, { timestamps: true });
+
 const userSchema = new mongoose.Schema({
   name:       { type: String, required: true, trim: true },
   email:      { type: String, required: true, unique: true, lowercase: true },
-  phone:      { type: String, required: true },
+  phone:      { type: String, required: false, default: '' }, // optional at schema level — enforced manually for normal signup, not required for Google login
   password:   { type: String, required: true, minlength: 6, select: false },
   role:       { type: String, enum: ['user','admin','operator'], default: 'user' },
   avatar:     { type: String, default: '' },
@@ -14,7 +20,8 @@ const userSchema = new mongoose.Schema({
   wallet:     { type: Number, default: 0 },
   otp:        String,
   otpExpire:  Date,
-  bookings:   [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }]
+  bookings:   [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+  savedPassengers: [savedPassengerSchema]
 }, { timestamps: true });
 
 userSchema.pre('save', async function(next) {

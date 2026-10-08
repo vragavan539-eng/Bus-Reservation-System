@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LayoutDashboard, Bus, Map, Ticket, Users, LogOut, Home } from 'lucide-react';
+import { LayoutDashboard, Bus, Map, Ticket, Users, LogOut, Home, BarChart3 } from 'lucide-react';
 
 const AdminLayout = ({ children, title }) => {
   const { user, logout } = useAuth();
@@ -9,62 +9,162 @@ const AdminLayout = ({ children, title }) => {
   const navigate = useNavigate();
 
   const links = [
-    ['/admin', LayoutDashboard, 'Dashboard'],
-    ['/admin/buses', Bus, 'Buses'],
-    ['/admin/routes', Map, 'Routes'],
-    ['/admin/bookings', Ticket, 'Bookings'],
-    ['/admin/users', Users, 'Users'],
+    ['/admin',           LayoutDashboard, 'Dashboard'],
+    ['/admin/analytics', BarChart3,       'Analytics'],
+    ['/admin/buses',     Bus,             'Buses'],
+    ['/admin/routes',    Map,             'Routes'],
+    ['/admin/bookings',  Ticket,          'Bookings'],
+    ['/admin/users',     Users,           'Users'],
   ];
 
   return (
-    <div style={{display:'flex',minHeight:'100vh',background:'#0a0f1e'}}>
-      <aside style={{width:'240px',background:'#0d1630',borderRight:'1px solid rgba(249,115,22,0.15)',display:'flex',flexDirection:'column',position:'fixed',height:'100vh',zIndex:100}}>
-        <div style={{padding:'24px 20px',borderBottom:'1px solid rgba(249,115,22,0.15)'}}>
-          <Link to="/" style={{display:'flex',alignItems:'center',gap:'10px'}}>
-            <Bus color="#f97316" size={22}/>
-            <span style={{fontFamily:'Syne',fontSize:'20px',fontWeight:800,color:'#f97316'}}>Bus<span style={{color:'#f1f5f9'}}>Go</span></span>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc', fontFamily: 'Inter, sans-serif' }}>
+
+      {/* ================= SIDEBAR ================= */}
+      <aside style={{
+        width: '240px', background: '#ffffff',
+        borderRight: '1px solid #e5e7eb',
+        display: 'flex', flexDirection: 'column',
+        position: 'fixed', height: '100vh', zIndex: 100,
+        boxShadow: '1px 0 0 rgba(0,0,0,0.02)'
+      }}>
+
+        {/* Logo */}
+        <div style={{ padding: '24px 20px', borderBottom: '1px solid #f1f5f9' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10,
+              background: 'linear-gradient(135deg,#f97316,#ea580c)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
+            }}>
+              <Bus color="#fff" size={19} />
+            </div>
+            <span style={{ fontSize: '20px', fontWeight: 800, color: '#0f172a', letterSpacing: '-0.5px' }}>
+              Bus<span style={{ color: '#f97316' }}>Go</span>
+            </span>
           </Link>
-          <div style={{marginTop:'12px',fontSize:'12px',color:'#94a3b8'}}>Admin Panel</div>
+          <div style={{
+            marginTop: '10px', display: 'inline-block',
+            fontSize: '11px', color: '#ea580c', fontWeight: 700,
+            background: '#fff7ed', padding: '3px 10px', borderRadius: 20,
+            letterSpacing: '0.5px'
+          }}>ADMIN PANEL</div>
         </div>
-        <nav style={{flex:1,padding:'16px 12px'}}>
+
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
           {links.map(([path, Icon, label]) => {
             const active = location.pathname === path;
             return (
-              <Link key={path} to={path} style={{ display:'flex',alignItems:'center',gap:'12px',padding:'11px 14px',borderRadius:'10px',marginBottom:'4px',
-                background:active?'rgba(249,115,22,0.15)':'transparent',color:active?'#f97316':'#94a3b8',fontSize:'14px',fontWeight:active?600:400,transition:'all .2s' }}
-                onMouseOver={e=>{if(!active){e.currentTarget.style.background='rgba(249,115,22,0.07)';e.currentTarget.style.color='#f1f5f9'}}}
-                onMouseOut={e=>{if(!active){e.currentTarget.style.background='transparent';e.currentTarget.style.color='#94a3b8'}}}>
-                <Icon size={17}/>{label}
+              <Link key={path} to={path}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                  padding: '11px 14px', borderRadius: '10px',
+                  marginBottom: '4px', textDecoration: 'none',
+                  background: active ? '#fff7ed' : 'transparent',
+                  color: active ? '#ea580c' : '#475569',
+                  fontSize: '14px', fontWeight: active ? 700 : 500,
+                  transition: 'all .2s'
+                }}
+                onMouseOver={e => {
+                  if (!active) {
+                    e.currentTarget.style.background = '#f8fafc';
+                    e.currentTarget.style.color = '#0f172a';
+                  }
+                }}
+                onMouseOut={e => {
+                  if (!active) {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#475569';
+                  }
+                }}>
+                <Icon size={17} />
+                {label}
               </Link>
             );
           })}
         </nav>
-        <div style={{padding:'16px 12px',borderTop:'1px solid rgba(148,163,184,0.1)'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'10px',padding:'10px 14px',marginBottom:'4px',borderRadius:'8px',background:'rgba(30,45,80,0.5)'}}>
-            <div style={{width:'32px',height:'32px',background:'rgba(249,115,22,0.2)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}>
-              <span style={{fontSize:'13px',fontWeight:700,color:'#f97316'}}>{user?.name[0]}</span>
+
+        {/* User + Logout */}
+        <div style={{ padding: '16px 12px', borderTop: '1px solid #f1f5f9' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            padding: '10px 12px', marginBottom: '6px', borderRadius: '10px',
+            background: '#f8fafc', border: '1px solid #f1f5f9'
+          }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: '50%',
+              background: 'linear-gradient(135deg,#f97316,#ea580c)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>
+                {(user?.name?.[0] || 'A').toUpperCase()}
+              </span>
             </div>
-            <div>
-              <div style={{fontSize:'13px',fontWeight:600,color:'#f1f5f9'}}>{user?.name}</div>
-              <div style={{fontSize:'11px',color:'#94a3b8'}}>Administrator</div>
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{
+                fontSize: '13px', fontWeight: 600, color: '#0f172a',
+                whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'
+              }}>{user?.name || 'Admin'}</div>
+              <div style={{ fontSize: '11px', color: '#94a3b8' }}>Administrator</div>
             </div>
           </div>
-          <button onClick={() => { logout(); navigate('/'); }} style={{ display:'flex',alignItems:'center',gap:'10px',padding:'10px 14px',borderRadius:'8px',
-            color:'#ef4444',background:'transparent',border:'none',width:'100%',cursor:'pointer',fontSize:'14px' }}>
-            <LogOut size={16}/> Logout
+
+          <button
+            onClick={() => { logout(); navigate('/'); }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '10px',
+              padding: '10px 14px', borderRadius: '8px',
+              color: '#dc2626', background: '#fef2f2',
+              border: 'none', width: '100%', cursor: 'pointer',
+              fontSize: '14px', fontWeight: 600, transition: 'all .2s'
+            }}
+            onMouseOver={e => e.currentTarget.style.background = '#fee2e2'}
+            onMouseOut={e => e.currentTarget.style.background = '#fef2f2'}>
+            <LogOut size={16} /> Logout
           </button>
         </div>
       </aside>
-      <main style={{marginLeft:'240px',flex:1,padding:'32px 36px'}}>
-        <div style={{marginBottom:'28px',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-          <h1 style={{fontFamily:'Syne',fontSize:'24px',fontWeight:800}}>{title}</h1>
-          <Link to="/" style={{display:'flex',alignItems:'center',gap:'6px',color:'#94a3b8',fontSize:'13px'}}>
-            <Home size={15}/> View Site
+
+      {/* ================= MAIN ================= */}
+      <main style={{ marginLeft: '240px', flex: 1, padding: '28px 32px', width: '100%' }}>
+
+        {/* Topbar */}
+        <div style={{
+          marginBottom: '28px', display: 'flex',
+          alignItems: 'center', justifyContent: 'space-between',
+          paddingBottom: '20px', borderBottom: '1px solid #e5e7eb'
+        }}>
+          <div>
+            <h1 style={{
+              fontSize: '24px', fontWeight: 800,
+              color: '#0f172a', margin: 0, letterSpacing: '-0.5px'
+            }}>{title}</h1>
+          </div>
+          <Link to="/" style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
+            color: '#475569', fontSize: '13px', fontWeight: 600,
+            textDecoration: 'none', padding: '8px 14px',
+            borderRadius: 8, border: '1px solid #e5e7eb',
+            background: '#fff', transition: 'all .2s'
+          }}
+            onMouseOver={e => {
+              e.currentTarget.style.color = '#ea580c';
+              e.currentTarget.style.borderColor = '#fed7aa';
+            }}
+            onMouseOut={e => {
+              e.currentTarget.style.color = '#475569';
+              e.currentTarget.style.borderColor = '#e5e7eb';
+            }}>
+            <Home size={15} /> View Site
           </Link>
         </div>
+
         {children}
       </main>
     </div>
   );
 };
+
 export default AdminLayout;

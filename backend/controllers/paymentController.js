@@ -27,7 +27,21 @@ exports.createOrder = asyncHandler(async (req, res) => {
     }
   };
 
-  const order = await razorpay.orders.create(options);
+  let order;
+  try {
+    order = await razorpay.orders.create(options);
+  } catch (razorpayErr) {
+    // IMPORTANT: Razorpay's own errors often carry statusCode 401/400.
+    // We must NOT let that leak through as our response status — the frontend
+    // treats any 401 as "session expired" and force-logs the user out.
+    console.error('❌ Razorpay order creation failed:', razorpayErr?.error || razorpayErr);
+    res.status(502); // 502 = "upstream payment provider failed", never confused with auth
+    throw new Error(
+      razorpayErr?.error?.description ||
+      'Payment gateway error — check Razorpay API keys in .env'
+    );
+  }
+
   res.json({
     success: true,
     orderId: order.id,
@@ -97,10 +111,17 @@ exports.refundPayment = asyncHandler(async (req, res) => {
   const refundAmount = Math.round(booking.refundAmount * 100); // paise
   if (refundAmount <= 0) { res.status(400); throw new Error('No refund applicable'); }
 
-  const refund = await razorpay.payments.refund(booking.paymentId, {
-    amount: refundAmount,
-    notes: { reason: booking.cancellationReason || 'User cancelled' }
-  });
+  let refund;
+  try {
+    refund = await razorpay.payments.refund(booking.paymentId, {
+      amount: refundAmount,
+      notes: { reason: booking.cancellationReason || 'User cancelled' }
+    });
+  } catch (razorpayErr) {
+    console.error('❌ Razorpay refund failed:', razorpayErr?.error || razorpayErr);
+    res.status(502);
+    throw new Error(razorpayErr?.error?.description || 'Refund failed at payment gateway');
+  }
 
   booking.refundStatus = 'completed';
   booking.paymentStatus = 'refunded';

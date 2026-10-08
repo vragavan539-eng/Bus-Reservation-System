@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { authAPI } from '../services/api';
 import { User, Save, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import SavedPassengersManager from '../components/SavedPassengers/SavedPassengersManager';
 
 export default function ProfilePage() {
   const { user, updateUser } = useAuth();
@@ -78,6 +79,11 @@ export default function ProfilePage() {
               </form>
             </div>
           </div>
+        </div>
+
+        {/* Saved Passengers — full width, below the profile/wallet grid */}
+        <div style={{ marginTop: '20px' }}>
+          <SavedPassengersManager />
         </div>
       </div>
     </div>

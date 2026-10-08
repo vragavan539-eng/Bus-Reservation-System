@@ -9,6 +9,14 @@
     "seed": "cd backend && npm run seed"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1"
+    "@google/generative-ai": "^0.24.1",
+    "@react-google-maps/api": "^2.20.8",
+    "google-auth-library": "^11.0.2",
+    "leaflet": "^1.9.4",
+    "react-leaflet": "^4.2.1",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^7.1.1"
   }
 }

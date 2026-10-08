@@ -4,6 +4,8 @@ const seatSchema = new mongoose.Schema({
   seatNumber:  { type: String, required: true },
   type:        { type: String, enum: ['window','aisle','middle'], default: 'aisle' },
   deck:        { type: String, enum: ['lower','upper'], default: 'lower' },
+  seatType:    { type: String, enum: ['seater','sleeper'], default: 'seater' },
+  genderLock:  { type: String, enum: ['none','male','female'], default: 'none' },
   isAvailable: { type: Boolean, default: true },
   price:       { type: Number, required: true }
 });

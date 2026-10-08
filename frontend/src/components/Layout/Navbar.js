@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Bus, User, LogOut, Ticket, Settings, ChevronDown, Menu, X } from 'lucide-react';
+import { Bus, User, LogOut, Ticket, Settings, ChevronDown } from 'lucide-react';
+
+const NAV_LINKS = [
+  ['/', 'Home'],
+  ['/search', 'Search'],
+  ['/offers', 'Offers'],
+  ['/track', 'Track Bus'],
+  ['/help', 'Help'],
+];
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -9,7 +17,6 @@ const Navbar = () => {
   const location = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [dropOpen, setDropOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 50);
@@ -29,9 +36,9 @@ const Navbar = () => {
       </Link>
 
       <div style={{display:'flex',gap:'28px',alignItems:'center'}}>
-        {[['/', 'Home'],['/search','Search'],['/track','Track Bus']].map(([path,label]) => (
+        {NAV_LINKS.map(([path,label]) => (
           <Link key={path} to={path} style={{ color:isActive(path)?'#f97316':'#94a3b8', fontSize:'14px', fontWeight:500, transition:'color .2s' }}
-            onMouseOver={e=>e.target.style.color='#f97316'} onMouseOut={e=>e.target.style.color=isActive(path)?'#f97316':'#94a3b8'}>
+            onMouseOver={e=>e.currentTarget.style.color='#f97316'} onMouseOut={e=>e.currentTarget.style.color=isActive(path)?'#f97316':'#94a3b8'}>
             {label}
           </Link>
         ))}
@@ -50,7 +57,7 @@ const Navbar = () => {
               <ChevronDown size={13} color="#64748b"/>
             </button>
             {dropOpen && (
-              <div onClick={() => setDropOpen(false)} style={{ position:'absolute',top:'calc(100%+8px)',right:0,marginTop:'8px',
+              <div onClick={() => setDropOpen(false)} style={{ position:'absolute',right:0,marginTop:'8px',
                 background:'#1e2d50',border:'1px solid rgba(249,115,22,0.2)',borderRadius:'12px',padding:'8px',minWidth:'190px',
                 boxShadow:'0 20px 60px rgba(0,0,0,0.5)',zIndex:10 }}>
                 {[

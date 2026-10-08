@@ -1,57 +1,91 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import toast from 'react-hot-toast';
+import { toast } from 'react-toastify'; // if you use a different toast lib, change this import
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
-const api = axios.create({ baseURL: '/api' });
-api.interceptors.request.use(cfg => {
-  const t = localStorage.getItem('busgo_token');
-  if (t) cfg.headers.Authorization = `Bearer ${t}`;
-  return cfg;
+// Axios instance — points to your backend API
+const api = axios.create({
+  baseURL: 'http://localhost:3000/api', // change to your backend URL/port if different
+});
+
+// Attach token to every request automatically
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('busgo_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;s
+  }
+  return config;
 });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Load user on first mount if token exists
   useEffect(() => {
-    const token = localStorage.getItem('busgo_token');
-    if (token) {
-      api.get('/auth/me').then(r => setUser(r.data.user)).catch(() => localStorage.removeItem('busgo_token')).finally(() => setLoading(false));
-    } else { setLoading(false); }
+    const loadUser = async () => {
+      const token = localStorage.getItem('busgo_token');
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data } = await api.get('/auth/me');
+        setUser(data.user);
+      } catch (err) {
+        localStorage.removeItem('busgo_token');
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUser();
   }, []);
 
   const login = async (email, password) => {
     const { data } = await api.post('/auth/login', { email, password });
     localStorage.setItem('busgo_token', data.token);
     setUser(data.user);
-    toast.success(`Welcome back, ${data.user.name}! 🚌`);
+    toast.success(`Welcome back, ${data.user.name}!`);
     return data.user;
   };
 
-  const register = async (name, email, phone, password) => {
-    const { data } = await api.post('/auth/register', { name, email, phone, password });
+  const register = async (name, email, password) => {
+    const { data } = await api.post('/auth/register', { name, email, password });
     localStorage.setItem('busgo_token', data.token);
     setUser(data.user);
-    toast.success('Account created! Welcome to BusGo 🎉');
+    toast.success(`Account created! Welcome, ${data.user.name}!`);
+    return data.user;
+  };
+
+  const loginWithGoogle = async (credential) => {
+    const { data } = await api.post('/auth/google', { credential });
+    localStorage.setItem('busgo_token', data.token);
+    setUser(data.user);
+    toast.success(`Welcome, ${data.user.name}! 🚌`);
     return data.user;
   };
 
   const logout = () => {
     localStorage.removeItem('busgo_token');
     setUser(null);
-    toast.success('Logged out successfully');
+    toast.info('Logged out successfully');
   };
 
-  const updateUser = (updated) => setUser(prev => ({ ...prev, ...updated }));
+  const updateUser = (updatedFields) => {
+    setUser((prev) => ({ ...prev, ...updatedFields }));
+  };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, updateUser, api }}>
+    <AuthContext.Provider
+      value={{ user, loading, login, register, loginWithGoogle, logout, updateUser, api }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
+
 export default AuthContext;

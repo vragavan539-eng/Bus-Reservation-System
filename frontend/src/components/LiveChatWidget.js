@@ -26,7 +26,7 @@ export default function LiveChatWidget() {
     const handler = () => openChat();
     document.addEventListener('open-busgo-chat', handler);
     return () => document.removeEventListener('open-busgo-chat', handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [session]);
 
   useEffect(() => {

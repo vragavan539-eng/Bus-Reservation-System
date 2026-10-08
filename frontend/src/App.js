@@ -14,12 +14,16 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import ProfilePage from './pages/ProfilePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import TrackBusPage from './pages/TrackBusPage';
 import AdminDashboard from './pages/AdminDashboard';
+import AdminAnalytics from './pages/AdminAnalytics';
 import AdminBuses from './pages/AdminBuses';
 import AdminRoutes from './pages/AdminRoutes';
 import AdminBookings from './pages/AdminBookings';
 import AdminUsers from './pages/AdminUsers';
+import OffersPage from './pages/OffersPage';
+import HelpSupportPage from './pages/HelpSupportPage';
 
 const WithLayout = ({ children }) => <><Navbar/>{children}<Footer/></>;
 
@@ -34,15 +38,19 @@ function App() {
           <Route path="/track" element={<WithLayout><TrackBusPage/></WithLayout>}/>
           <Route path="/login" element={<LoginPage/>}/>
           <Route path="/register" element={<RegisterPage/>}/>
+          <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
           <Route path="/booking/:routeId" element={<PrivateRoute><WithLayout><BookingPage/></WithLayout></PrivateRoute>}/>
           <Route path="/booking/confirm/:id" element={<PrivateRoute><WithLayout><BookingConfirmPage/></WithLayout></PrivateRoute>}/>
           <Route path="/my-bookings" element={<PrivateRoute><WithLayout><MyBookingsPage/></WithLayout></PrivateRoute>}/>
           <Route path="/profile" element={<PrivateRoute><WithLayout><ProfilePage/></WithLayout></PrivateRoute>}/>
           <Route path="/admin" element={<AdminRoute><AdminDashboard/></AdminRoute>}/>
+          <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics/></AdminRoute>}/>
           <Route path="/admin/buses" element={<AdminRoute><AdminBuses/></AdminRoute>}/>
           <Route path="/admin/routes" element={<AdminRoute><AdminRoutes/></AdminRoute>}/>
           <Route path="/admin/bookings" element={<AdminRoute><AdminBookings/></AdminRoute>}/>
           <Route path="/admin/users" element={<AdminRoute><AdminUsers/></AdminRoute>}/>
+          <Route path="/offers" element={<WithLayout><OffersPage/></WithLayout>}/>
+          <Route path="/help" element={<WithLayout><HelpSupportPage/></WithLayout>}/>
           <Route path="*" element={<Navigate to="/"/>}/>
         </Routes>
       </Router>

@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const API = axios.create({ baseURL: '/api' });
 
 API.interceptors.request.use(cfg => {
@@ -63,11 +62,40 @@ export const paymentAPI = {
   details:     id => API.get(`/payments/details/${id}`),
 };
 
+// ==================== ADMIN API ====================
 export const adminAPI = {
+  // Dashboard
   dashboard: () => API.get('/admin/dashboard'),
-  users:     p  => API.get('/admin/users', { params: p }),
-  block:     id => API.put(`/admin/users/${id}/block`),
-  unblock:   id => API.put(`/admin/users/${id}/unblock`),
+
+  // Users
+  users:   p  => API.get('/admin/users', { params: p }),
+  block:   id => API.put(`/admin/users/${id}/block`),
+  unblock: id => API.put(`/admin/users/${id}/unblock`),
+
+  // Bookings CRUD
+  getBookings:   p       => API.get('/admin/bookings', { params: p }),
+  createBooking: d       => API.post('/admin/bookings', d),
+  updateBooking: (id, d) => API.put(`/admin/bookings/${id}`, d),
+  deleteBooking: id      => API.delete(`/admin/bookings/${id}`),
+
+  // Buses CRUD
+  getBuses:   p       => API.get('/admin/buses', { params: p }),
+  createBus:  d       => API.post('/admin/buses', d),
+  updateBus:  (id, d) => API.put(`/admin/buses/${id}`, d),
+  deleteBus:  id      => API.delete(`/admin/buses/${id}`),
+
+  // Routes CRUD
+  getRoutes:   ()      => API.get('/admin/routes'),
+  createRoute: d       => API.post('/admin/routes', d),
+  updateRoute: (id, d) => API.put(`/admin/routes/${id}`, d),
+  deleteRoute: id      => API.delete(`/admin/routes/${id}`),
+
+  // ✅ NEW: Analytics & Reports
+  analytics:       (range = '30d') => API.get('/admin/analytics', { params: { range } }),
+  exportAnalytics: (range = '30d') => API.get('/admin/analytics/export', {
+    params: { range },
+    responseType: 'blob',
+  }),
 };
 
 export const reviewAPI = {
